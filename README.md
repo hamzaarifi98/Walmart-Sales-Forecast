@@ -58,6 +58,3 @@ The inference pipeline:
 * `app.py` — Training entry point
 * `src/inference.py` — Batch inference entry point
 
-
-* adapt it for **resume bullets**, or
-* rewrite it with a **strong ML-engineer focus** instead of data-science tone.
