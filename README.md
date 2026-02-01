@@ -1,40 +1,60 @@
-## Walmart Sales End-to-End project 
+## Walmart Sales End-to-End Project
 
-This project forecasts Walmart Weekly Sales in Store, Department level, where as a model it uses **XGBoost** where **r^2 = 0.973**. I have created lag and rolling features to get more precise result. **Lag and rolls are shifted by k value in history data to prevent leakage**. Also I have done **split train test by date** not randomly to prevent data leakage. Forecasting is easy by writing this code for inference in terminal:
+This project forecasts **weekly Walmart sales at the Store–Department level** using an end-to-end machine learning pipeline. The forecasting model is built with **XGBoost** and achieves an **R² score of 0.973** on a time-based holdout set.
 
+A strong emphasis is placed on **leakage-safe time-series modeling**. Lag and rolling features are computed strictly from historical data using shifted values to prevent future information leakage. Model evaluation uses a **date-based train/test split** rather than random sampling, ensuring realistic performance assessment for forecasting tasks.
 
+The project also includes a **production-style batch inference pipeline**, allowing users to generate future sales predictions directly from the command line.
+
+---
+
+## Batch Inference (Forecasting)
+
+Forecasting future sales is performed via a command-line inference script:
+
+```bash
 python -m src.inference \
-  --artifact models/artifact.pkl \  
+  --artifact models/artifact.pkl \
   --history data/train.csv \
   --future data/test.csv \
   --output outputs/predictions.csv
+```
 
-It will get the future data and with the model that has been trained will forecast sales for next weeks in **future** data and it exports in output folder the result. 
+The inference pipeline:
 
+* Uses historical data to compute lag and rolling features
+* Rebuilds the full preprocessing and feature-engineering pipeline
+* Aligns inference features with the training schema
+* Predicts weekly sales for future dates
+* Exports results to the specified output file
 
-## The project Step by Step
-- Merges raw datasets (train + features + stores)
-- Builds preprocessing + engineered features:
-  - cyclical date features (sin/cos)
-  - leakage-safe lag features and rolling statistics per (Store, Dept)
-- Uses a **time-based split** (not random) for evaluation
-- Trains an **XGBoost regressor**
-- Saves a reusable artifact (`model + feature schema`)
-- Runs batch inference from the command line
+---
 
+## Project Workflow
 
-- Metrics reported: **MSE / MAE / R²**
+* Merge raw datasets (sales, features, and store metadata)
+* Perform preprocessing and feature engineering:
 
-> Note: Sales are highly autocorrelated; lag/rolling features are strong predictors.  
-> The split is time-based to avoid leakage.
+  * Cyclical date features (sine/cosine encoding)
+  * Leakage-safe lag features and rolling statistics per (Store, Dept)
+* Split data using a **time-based** train/test strategy
+* Train an **XGBoost regressor**
+* Evaluate performance using **MSE, MAE, and R²**
+* Save a reusable model artifact (model + feature schema)
+* Run batch inference from the command line
 
+> **Note:** Retail sales are highly autocorrelated, making lag and rolling features strong predictors. Time-based splitting is used to avoid data leakage and ensure realistic evaluation.
 
-## Project structure
-- `src/config.py` — central paths + parameters (dataclass)
-- `src/io.py` — read/merge CSV files
-- `src/preprocessing.py` — date features + cleaning + encoding
-- `src/features.py` — lag + rolling features (leakage-safe)
-- `src/train_test_split.py` — time-based split
-- `src/train_test.py` — train + evaluate functions
-- `app.py` — training entry point
-- `src/inference.py` — batch inference entry point
+---
+
+## Project Structure
+
+* `src/config.py` — Centralized configuration and paths (dataclass)
+* `src/io.py` — Data loading and dataset merging
+* `src/preprocessing.py` — Date features, cleaning, and encoding
+* `src/features.py` — Leakage-safe lag and rolling feature engineering
+* `src/train_test_split.py` — Time-based data splitting
+* `src/train_test.py` — Model training and evaluation
+* `app.py` — Training entry point
+* `src/inference.py` — Batch inference entry point
+
