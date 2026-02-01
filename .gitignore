@@ -1,0 +1,41 @@
+
+---
+
+## ✅ .gitignore (copy/paste)
+
+```gitignore
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.joblib
+
+# Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Data / outputs (usually not committed)
+data/
+outputs/
+models/
+
+# Logs
+*.log
+
+# Packaging
+build/
+dist/
+*.egg-info/
